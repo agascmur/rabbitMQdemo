@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - fitxes-net
+
+  dpn-agent:
+    build: ./dpn_agent
+    container_name: dpn-agent
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - fitxes-net
+
+  scraper:
+    build: ./scraper
+    container_name: scraper
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - fitxes-net
+
+networks:
+  fitxes-net:
+    driver: bridge
