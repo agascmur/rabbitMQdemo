@@ -4,9 +4,10 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 channel = connection.channel()
 
 callback_queue = 'scraper_callback_queue'
-channel.queue_declare(queue=callback_queue)
+channel.queue_declare(queue=callback_queue, durable=True)
+channel.queue_declare(queue='fitxes_to_process', durable=True)  # Crea la cua durable sense necessitat de tenir consumidors declarats
 
-NUM_MESSAGES = 1000
+NUM_MESSAGES = 100000
 corr_ids = []
 responses = {}
 
@@ -41,7 +42,8 @@ for i in range(NUM_MESSAGES):
         routing_key='fitxes_to_process',
         properties=pika.BasicProperties(
             reply_to=callback_queue,
-            correlation_id=corr_id
+            correlation_id=corr_id,
+            delivery_mode=2
         ),
         body=json.dumps(fitxa)
     )

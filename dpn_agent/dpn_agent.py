@@ -5,7 +5,7 @@ import json
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 channel = connection.channel()
 
-channel.queue_declare(queue='fitxes_to_process')
+channel.queue_declare(queue='fitxes_to_process', durable=True)  # Crea la cua durable sense necessitat de tenir productors declarats
 
 def processa_fitxa(fitxa):
     print(f"⚙️  Processant fitxa: {fitxa['fitxa_id']}")
